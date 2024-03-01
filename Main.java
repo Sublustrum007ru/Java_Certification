@@ -1,9 +1,12 @@
 public class Main{
+
     public static void main(String[] args){
-        String str;
-        str = "Heloo world!!";
-        Printer.print(str);
-        str = "My name Sublustrum007";
-        Printer.print(str);
+        String[] str = {"Hello world", "My name is Sublustrum007",};
+        for(int i = 0; i < str.length; i++){
+            Printer.print(str[i]);
+        }
+        
+        Menu.menu();
+
     }
 }
