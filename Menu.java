@@ -2,49 +2,40 @@ import java.util.Scanner;
 
 public class Menu {
     public static void menu() {
-        boolean flag = true;
-        String[] m = { "1. Добавить запись.",
+        boolean flag = false;
+        Scanner input = new Scanner(System.in);
+        // int cmd = 0;
+        String str = "";
+        String[] m = { "",
+                "1. Добавить запись.",
                 "2. Изменить запись",
                 "3. Удалить запись",
                 "4. Вывести всю книгу",
                 "5. Выход",
         };
+        String[] msg = { "ОШИБКА!!!\n",
+                    "Вы ввели не верное число или вовсе не число.\n",
+                    "Похалуюйста введите число!!!\n" };
         for (int i = 0; i < m.length; i++) {
             System.out.println(m[i]);
         }
-        System.out.print("Введите команду: ");
-        Scanner input = new Scanner(System.in);
-        int cmd = input.nextInt();
-        
-        while (flag){
-            switch (cmd) {
-                case 1:
-                    System.out.println("Add");
-                    menu();
-                    break;
-                case 2:
-                    System.out.println("Edit");
-                    menu();
-                    break;
-                case 3:
-                    System.out.println("Delet");
-                    menu();
-                    break;
-                case 4:
-                    System.out.println("print book");
-                    menu();
-                    break;
-                case 5:
+        while (!flag) {
+            str = "Введите команду: ";
+            Printer.print(str);
+            int cmd = input.nextInt();
+            if(cmd <= 5 && cmd > 0){
+                System.out.println("Диапозон правильный");
+                if(cmd == 1){Add.addNew();}
+                if(cmd == 2){System.out.println("Two"); menu();}
+                if(cmd == 3){System.out.println("Thre"); menu();}
+                if(cmd == 4){System.out.println("Four"); menu();}
+                if(cmd == 5){
+                    flag = true;
                     System.out.println("Exit");
-                    flag = false;
-                    break;
-                default:
-                    String str = "Bad command!!!";
-                    Printer.print(str);
-                    menu();
-                    break;
-            }
-       
+                }
+            }else{
+                menu();
+            }       
         }
         input.close();
     }
