@@ -3,8 +3,15 @@ package Java_Certification;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class programm {
     protected static Boolean exit = false;
@@ -26,19 +33,41 @@ public class programm {
             ArrayList<String> value = new ArrayList<>();
             value.add(phoneNum);
             myPhoneBook.put(key, value);
+            File file = new File(path);
+            BufferedWriter bf = null;
+            try {
+                bf = new BufferedWriter(new FileWriter(file));
+                for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
+                    bf.write(entry.getKey() + ":" + entry.getValue());
+                    bf.newLine();
+                }
+                bf.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    bf.close();
+                } catch (Exception e) {
+                }
+            }
+
         } else {
-            System.out.println("Такое имя уже существует!!!");
-            ArrayList<String> value = new ArrayList<>();
-            value = myPhoneBook.get(key);
-            value.add(phoneNum);
-            myPhoneBook.replace(key, value);
+            System.out.println("Такое имя уже существует");
+            System.out.println("Выберите что вы желаете сделать");
+            String[] twoMenu = { "1. Добавить к существуещему",
+                    "2. Изменить существующий",
+                    "3. Выход",
+            };
+            for (int i = 0; i < twoMenu.length; i++) {
+                System.out.println(twoMenu[i]);
+            }
         }
 
     }
 
     public static void edit() {
-        System.out.println("Запись успешно изменена");
-
+        System.out.println("edit");
     }
 
     public static void del() {
@@ -46,8 +75,51 @@ public class programm {
 
     }
 
-    public static HashMap<String, ArrayList<String>> printBook() {
-        return myPhoneBook;
+    public static Map<String, String> printBook() {
+        Map<String, String> map = new HashMap<String, String>();
+        BufferedReader br = null;
+
+        try {
+            String path = "myPhoneBook.txt";
+
+            // create file object
+            File file = new File(path);
+
+            // create BufferedReader object from the File
+            br = new BufferedReader(new FileReader(file));
+
+            String line = null;
+
+            // read file line by line
+            while ((line = br.readLine()) != null) {
+
+                // split the line by :
+                String[] parts = line.split(":");
+
+                // first part is name, second is number
+                String name = parts[0].trim();
+                String number = parts[1].trim();
+
+                // put name, number in HashMap if they are
+                // not empty
+                if (!name.equals("") && !number.equals(""))
+                    map.put(name, number);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            // Always close the BufferedReader
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                }
+                ;
+            }
+        }
+
+        return map;
     }
 
     public static boolean isNumeric(String str) {
@@ -92,7 +164,14 @@ public class programm {
                     exit = false;
                 }
                 if (cmd == 4) {
-                    System.out.println(printBook());
+
+                    Map<String, String> mapFromFile = printBook();
+
+                    // iterate over HashMap entries
+                    for (Map.Entry<String, String> entry : mapFromFile.entrySet()) {
+                        System.out.println(entry.getKey() + " : "
+                                + entry.getValue());
+                    }
                     System.out.println();
                     exit = false;
                 }
@@ -104,7 +183,7 @@ public class programm {
 
             } else {
                 System.out.println();
-                while(inputWarning.hasNextLine()){
+                while (inputWarning.hasNextLine()) {
                     System.out.println(inputWarning.nextLine());
                 }
                 System.out.println();
@@ -112,7 +191,7 @@ public class programm {
 
         } else {
             System.out.println();
-            while(inputWarning.hasNextLine()){
+            while (inputWarning.hasNextLine()) {
                 System.out.println(inputWarning.nextLine());
             }
             System.out.println();
