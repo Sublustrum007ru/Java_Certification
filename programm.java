@@ -3,106 +3,35 @@ package Java_Certification;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class programm {
     protected static Boolean exit = false;
     static Scanner input = new Scanner(System.in);
-    // static ArrayList<String> key = new ArrayList<>();
-    // static ArrayList<String> value = new ArrayList<>();
-    static HashMap<ArrayList<String>, ArrayList<String>> myPhoneBook = new HashMap<>();
+    static HashMap<String, ArrayList<String>> myPhoneBook = new HashMap<>();
     final static String path = "myPhoneBook.txt";
 
     public static void print(String args) {
         System.out.print(args);
     }
 
-    public static HashMap<ArrayList<String>, ArrayList<String>> testWriter() {
-        File file = new File(path);
-
-        BufferedWriter bf = null;
-        ;
-
-        try {
-
-            // create new BufferedWriter for the output file
-            bf = new BufferedWriter(new FileWriter(file));
-
-            // iterate map entries
-            for (Map.Entry<ArrayList<String>, ArrayList<String>> entry : myPhoneBook.entrySet()) {
-
-                // put key and value separated by a colon
-                bf.write(entry.getKey() + " - " + entry.getValue());
-
-                // new line
-                bf.newLine();
-            }
-
-            bf.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-
-            try {
-                // always close the writer
-                bf.close();
-            } catch (Exception e) {
-            }
-        }
-        return myPhoneBook;
-    }
-
     public static void add() {
-        ArrayList<String> key = new ArrayList<>();
-        System.out.println("Введите Имя и Фамилию, черз пробел");
-        String name = input.nextLine();
-        key.add(name);
-        System.out.println("Введите номер(а) телефона, через пробел");
+        System.out.print("Введите Имя и Фамилию, черз пробел: ");
+        // String name = input.nextLine();
+        String key = input.nextLine();
+        System.out.print("Введите номер телефона: ");
         String phoneNum = input.nextLine();
-        if (myPhoneBook.containsKey(name) == false) {
+        if (myPhoneBook.containsKey(key) == false) {
             ArrayList<String> value = new ArrayList<>();
             value.add(phoneNum);
             myPhoneBook.put(key, value);
-            File file = new File(path);
-            BufferedWriter bf = null;
-            try {
-                bf = new BufferedWriter(new FileWriter(file));
-                for (Map.Entry<ArrayList<String>, ArrayList<String>> entry : myPhoneBook.entrySet()) {
-                    bf.write(entry.getKey() + ":" + entry.getValue());
-                    bf.newLine();
-                }
-                bf.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    bf.close();
-                } catch (Exception e) {
-                }
-            }
-        }else{
+        } else {
+            System.out.println("Такое имя уже существует!!!");
             ArrayList<String> value = new ArrayList<>();
-            value = myPhoneBook.get(name);
+            value = myPhoneBook.get(key);
+            value.add(phoneNum);
             myPhoneBook.replace(key, value);
-            File file = new File(path);
-            BufferedWriter bf = null;
-            try {
-                bf = new BufferedWriter(new FileWriter(file));
-                for (Map.Entry<ArrayList<String>, ArrayList<String>> entry : myPhoneBook.entrySet()) {
-                    bf.write(entry.getKey() + ":" + entry.getValue());
-                    bf.newLine();
-                }
-                bf.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    bf.close();
-                } catch (Exception e) {
-                }
-            }
         }
 
     }
@@ -117,7 +46,7 @@ public class programm {
 
     }
 
-    public static HashMap<ArrayList<String>, ArrayList<String>> printBook() {
+    public static HashMap<String, ArrayList<String>> printBook() {
         return myPhoneBook;
     }
 
@@ -130,46 +59,41 @@ public class programm {
         }
     }
 
-    public static void menu() {
-        String[] m = { "",
-                "1. Добавить запись.",
-                "2. Изменить запись",
-                "3. Удалить запись",
-                "4. Вывести всю книгу",
-                "5. Выход",
-        };
-        String[] msg = { "\n",
-                "***********************************************\n",
-                "*                  ОШИБКА!!!                  *\n",
-                "* Вы ввели не верное число или вовсе не число.*\n",
-                "*          Пожалуйста введите число!!!        *\n",
-                "***********************************************",
-        };
-        for (int i = 0; i < m.length; i++) {
-            System.out.println(m[i]);
+    public static void menu() throws FileNotFoundException {
+        String pathMenu = "menu.txt";
+        String pathWarning = "warning.txt";
+        File menu = new File(pathMenu);
+        File warning = new File(pathWarning);
+        Scanner inputMenu = new Scanner(menu);
+        Scanner inputWarning = new Scanner(warning);
+        while (inputMenu.hasNextLine()) {
+            System.out.println(inputMenu.nextLine());
         }
-
+        inputMenu.close();
         String str = "Введите команду: ";
         print(str);
-        // Scanner input = new Scanner(System.in);
         String temp = input.nextLine();
         if (isNumeric(temp) == true) {
             int cmd = Integer.parseInt(temp);
             if (cmd <= 5 && cmd > 0) {
                 if (cmd == 1) {
                     add();
+                    System.out.println();
                     exit = false;
                 }
                 if (cmd == 2) {
                     edit();
+                    System.out.println();
                     exit = false;
                 }
                 if (cmd == 3) {
                     del();
+                    System.out.println();
                     exit = false;
                 }
                 if (cmd == 4) {
-                    printBook();
+                    System.out.println(printBook());
+                    System.out.println();
                     exit = false;
                 }
                 if (cmd == 5) {
@@ -179,32 +103,32 @@ public class programm {
                 }
 
             } else {
-                for (int i = 0; i < msg.length; i++) {
-                    print(msg[i]);
+                System.out.println();
+                while(inputWarning.hasNextLine()){
+                    System.out.println(inputWarning.nextLine());
                 }
+                System.out.println();
             }
 
         } else {
-            for (int i = 0; i < msg.length; i++) {
-                System.out.print(msg[i]);
-
+            System.out.println();
+            while(inputWarning.hasNextLine()){
+                System.out.println(inputWarning.nextLine());
             }
+            System.out.println();
+            inputWarning.close();
         }
     }
 
-    public static void main(String[] args) {
-        String[] str = { "\n",
-                "$--------------------------$\n",
-                "$ Hello world!!!           $\n",
-                "$ My name is Sublustrum007 $\n",
-                "$ And this my project      $\n",
-                "$ Phone Book               $\n",
-                "$--------------------------$\n",
-                "\n",
-        };
-        for (int i = 0; i < str.length; i++) {
-            System.out.print(str[i]);
+    public static void main(String[] args) throws FileNotFoundException {
+        String pathMsg = "msg.txt";
+        File msg = new File(pathMsg);
+        Scanner scanner = new Scanner(msg);
+        while (scanner.hasNextLine()) {
+            System.out.println(scanner.nextLine());
         }
+        System.out.println();
+        scanner.close();
 
         while (!programm.exit) {
             programm.menu();
