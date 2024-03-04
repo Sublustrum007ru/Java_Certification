@@ -15,21 +15,25 @@ import java.io.PrintWriter;
 
 public class programm {
     protected static Boolean exit = false;
+    protected static Boolean exit2 = false;
     static Scanner input = new Scanner(System.in);
     static HashMap<String, ArrayList<String>> myPhoneBook = new HashMap<>();
     final static String path = "myPhoneBook.txt";
+    final static String pathMenu = "menu.txt";
+    final static String pathWarning = "warning.txt";
 
     public static void print(String args) {
         System.out.print(args);
     }
 
-    public static void add() {
+    public static void add() throws FileNotFoundException {
         System.out.print("Введите Имя и Фамилию, черз пробел: ");
         // String name = input.nextLine();
         String key = input.nextLine();
         System.out.print("Введите номер телефона: ");
         String phoneNum = input.nextLine();
-        if (myPhoneBook.containsKey(key) == false) {
+
+        if (myPhoneBook.containsKey(key)) {
             ArrayList<String> value = new ArrayList<>();
             value.add(phoneNum);
             myPhoneBook.put(key, value);
@@ -51,7 +55,6 @@ public class programm {
                 } catch (Exception e) {
                 }
             }
-
         } else {
             System.out.println("Такое имя уже существует");
             System.out.println("Выберите что вы желаете сделать");
@@ -61,6 +64,89 @@ public class programm {
             };
             for (int i = 0; i < twoMenu.length; i++) {
                 System.out.println(twoMenu[i]);
+            }
+            File warning = new File(pathWarning);
+            Scanner inputWarning = new Scanner(warning);
+            System.out.print("Ввеите команду: ");
+            String comand = input.nextLine();
+            if (isNumeric(comand) == true) {
+                int cmd = Integer.parseInt(comand);
+                if (cmd <= 3 && cmd > 0) {
+                    if (cmd == 1) {
+                        BufferedReader br = null;
+                        try {
+                            File file = new File(path);
+                            br = new BufferedReader(new FileReader(file));
+                            String line = null;
+                            while ((line = br.readLine()) != null) {
+                                String[] parts = line.split(":");
+                                parts[1] = parts[1].trim().replace("[", "").replace("]", "").replace(" ", "");
+                                String[] temp = parts[1].split(",");
+                                ArrayList<String> list1 = new ArrayList<>();
+                                for (int i = 0; i < temp.length; i++) {
+                                    list1.add(temp[i]);
+                                }
+                                list1.add(phoneNum);
+                                myPhoneBook.put(key, list1);
+                                File newFile = new File(path);
+                                BufferedWriter bf = null;
+                                try {
+                                    bf = new BufferedWriter(new FileWriter(newFile));
+                                    for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
+                                        bf.write(entry.getKey() + ":" + entry.getValue());
+                                        bf.newLine();
+                                    }
+                                    bf.flush();
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    try {
+                                        bf.close();
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (br != null) {
+                                try {
+                                    br.close();
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        }
+                        exit2 = true;
+                    }
+                    if (cmd == 2) {
+                        ArrayList<String> value = new ArrayList<>();
+                        value.add(phoneNum);
+                        myPhoneBook.replace(key, value);
+                        exit2 = true;
+                    }
+                    if (cmd == 3) {
+                        System.out.println("exit");
+                        input.close();
+                        exit2 = true;
+                    } else {
+                        System.out.println();
+                        while (inputWarning.hasNextLine()) {
+                            System.out.println(inputWarning.nextLine());
+                        }
+                        System.out.println();
+                    }
+                }
+                    else {
+                    System.out.println();
+                    while (inputWarning.hasNextLine()) {
+                        System.out.println(inputWarning.nextLine());
+                    }
+                    System.out.println();
+                    inputWarning.close();
+                
+                }
             }
         }
 
@@ -132,8 +218,7 @@ public class programm {
     }
 
     public static void menu() throws FileNotFoundException {
-        String pathMenu = "menu.txt";
-        String pathWarning = "warning.txt";
+
         File menu = new File(pathMenu);
         File warning = new File(pathWarning);
         Scanner inputMenu = new Scanner(menu);
