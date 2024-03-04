@@ -11,29 +11,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class programm {
     protected static Boolean exit = false;
-    protected static Boolean exit2 = false;
     static Scanner input = new Scanner(System.in);
     static HashMap<String, ArrayList<String>> myPhoneBook = new HashMap<>();
     final static String path = "myPhoneBook.txt";
-    final static String pathMenu = "menu.txt";
-    final static String pathWarning = "warning.txt";
 
     public static void print(String args) {
         System.out.print(args);
     }
 
-    public static void add() throws FileNotFoundException {
+    public static void add() {
         System.out.print("Введите Имя и Фамилию, черз пробел: ");
-        // String name = input.nextLine();
         String key = input.nextLine();
         System.out.print("Введите номер телефона: ");
         String phoneNum = input.nextLine();
-
-        if (myPhoneBook.containsKey(key)) {
+        if (myPhoneBook.containsKey(key) == false) {
             ArrayList<String> value = new ArrayList<>();
             value.add(phoneNum);
             myPhoneBook.put(key, value);
@@ -55,97 +49,79 @@ public class programm {
                 } catch (Exception e) {
                 }
             }
+
         } else {
-            System.out.println("Такое имя уже существует");
-            System.out.println("Выберите что вы желаете сделать");
-            String[] twoMenu = { "1. Добавить к существуещему",
-                    "2. Изменить существующий",
-                    "3. Выход",
+            System.out.println("Такое имя уже существует!!!");
+            String[] miniMenu = { "1. Добавить к существующей",
+                    "2. Изменить существующую",
+                    "3. Выход"
             };
-            for (int i = 0; i < twoMenu.length; i++) {
-                System.out.println(twoMenu[i]);
+            for (int i = 0; i < miniMenu.length; i++) {
+                System.out.println(miniMenu[i]);
+
             }
-            File warning = new File(pathWarning);
-            Scanner inputWarning = new Scanner(warning);
-            System.out.print("Ввеите команду: ");
-            String comand = input.nextLine();
-            if (isNumeric(comand) == true) {
-                int cmd = Integer.parseInt(comand);
-                if (cmd <= 3 && cmd > 0) {
-                    if (cmd == 1) {
-                        BufferedReader br = null;
-                        try {
-                            File file = new File(path);
-                            br = new BufferedReader(new FileReader(file));
-                            String line = null;
-                            while ((line = br.readLine()) != null) {
-                                String[] parts = line.split(":");
-                                parts[1] = parts[1].trim().replace("[", "").replace("]", "").replace(" ", "");
-                                String[] temp = parts[1].split(",");
-                                ArrayList<String> list1 = new ArrayList<>();
-                                for (int i = 0; i < temp.length; i++) {
-                                    list1.add(temp[i]);
-                                }
-                                list1.add(phoneNum);
-                                myPhoneBook.put(key, list1);
-                                File newFile = new File(path);
-                                BufferedWriter bf = null;
-                                try {
-                                    bf = new BufferedWriter(new FileWriter(newFile));
-                                    for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
-                                        bf.write(entry.getKey() + ":" + entry.getValue());
-                                        bf.newLine();
-                                    }
-                                    bf.flush();
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    try {
-                                        bf.close();
-                                    } catch (Exception e) {
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (br != null) {
-                                try {
-                                    br.close();
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }
-                        exit2 = true;
-                    }
-                    if (cmd == 2) {
+            System.out.print("Введите команду: ");
+            Scanner miniInput = new Scanner(System.in);
+            String miniStr = miniInput.nextLine();
+            if (isNumeric(miniStr) == true) {
+                int miniCmd = Integer.parseInt(miniStr);
+                if (miniCmd <= 3 && miniCmd > 0) {
+                    if (miniCmd == 1) {
                         ArrayList<String> value = new ArrayList<>();
+                        value = myPhoneBook.get(key);
                         value.add(phoneNum);
                         myPhoneBook.replace(key, value);
-                        exit2 = true;
-                    }
-                    if (cmd == 3) {
-                        System.out.println("exit");
-                        input.close();
-                        exit2 = true;
-                    } else {
-                        System.out.println();
-                        while (inputWarning.hasNextLine()) {
-                            System.out.println(inputWarning.nextLine());
+                        File file = new File(path);
+                        BufferedWriter bf = null;
+                        try {
+                            bf = new BufferedWriter(new FileWriter(file));
+                            for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
+                                bf.write(entry.getKey() + ":" + entry.getValue());
+                                bf.newLine();
+                            }
+                            bf.flush();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                bf.close();
+                            } catch (Exception e) {
+                            }
                         }
                         System.out.println();
+                        System.out.println("Новый номер телефона успешно добавлен");
                     }
-                }
-                    else {
-                    System.out.println();
-                    while (inputWarning.hasNextLine()) {
-                        System.out.println(inputWarning.nextLine());
+                    if (miniCmd == 2) {
+                        ArrayList<String> value = new ArrayList<>();
+                        value.add(phoneNum);
+                        System.out.println();
+                        myPhoneBook.replace(key, value);
+                        File file = new File(path);
+                        BufferedWriter bf = null;
+                        try {
+                            bf = new BufferedWriter(new FileWriter(file));
+                            for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
+                                bf.write(entry.getKey() + ":" + entry.getValue());
+                                bf.newLine();
+                            }
+                            bf.flush();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                bf.close();
+                            } catch (Exception e) {
+                            }
+                        }
+                        System.out.println();
+                        System.out.println("Запись успешно изменена");
+
                     }
-                    System.out.println();
-                    inputWarning.close();
-                
+                    if (miniCmd == 3) {
+                        System.out.println("three");
+                    }
                 }
             }
         }
@@ -153,11 +129,60 @@ public class programm {
     }
 
     public static void edit() {
-        System.out.println("edit");
+        System.out.print("Введите Имя и Фамилию, черз пробел: ");
+        String key = input.nextLine();
+        System.out.print("Введите номер телефона: ");
+        String phoneNum = input.nextLine();
+        ArrayList<String> value = new ArrayList<>();
+        value.add(phoneNum);
+        myPhoneBook.replace(key, value);
+        File file = new File(path);
+        BufferedWriter bf = null;
+        try {
+            bf = new BufferedWriter(new FileWriter(file));
+            for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
+                bf.write(entry.getKey() + ":" + entry.getValue());
+                bf.newLine();
+            }
+            bf.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bf.close();
+            } catch (Exception e) {
+            }
+        }
+
+        System.out.println();
+        System.out.println("Запись успешно изменена");
     }
 
     public static void del() {
-        System.out.println("Запись успешно удалена");
+        System.out.print("Введите Имя и Фамилию, черз пробел: ");
+        String key = input.nextLine();
+        if(myPhoneBook.containsKey(key) == true){
+            myPhoneBook.remove(key);
+        }
+        File file = new File(path);
+        BufferedWriter bf = null;
+        try {
+            bf = new BufferedWriter(new FileWriter(file));
+            for (Map.Entry<String, ArrayList<String>> entry : myPhoneBook.entrySet()) {
+                bf.write(entry.getKey() + ":" + entry.getValue());
+                bf.newLine();
+            }
+            bf.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bf.close();
+            } catch (Exception e) {
+            }
+        }
 
     }
 
@@ -218,7 +243,8 @@ public class programm {
     }
 
     public static void menu() throws FileNotFoundException {
-
+        String pathMenu = "menu.txt";
+        String pathWarning = "warning.txt";
         File menu = new File(pathMenu);
         File warning = new File(pathWarning);
         Scanner inputMenu = new Scanner(menu);
@@ -249,7 +275,6 @@ public class programm {
                     exit = false;
                 }
                 if (cmd == 4) {
-
                     Map<String, String> mapFromFile = printBook();
 
                     // iterate over HashMap entries
@@ -293,6 +318,37 @@ public class programm {
         }
         System.out.println();
         scanner.close();
+
+        BufferedReader br = null;
+        try {
+            String path = "myPhoneBook.txt";
+            File file = new File(path);
+            br = new BufferedReader(new FileReader(file));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(":");
+                for (int i = 0; i < parts.length; i++) {
+                    if (i % 2 == 0) {
+                        String key = parts[0].trim();
+                        ArrayList<String> value = new ArrayList<>();
+                        parts[1] = parts[1].replace("[", "").replace("]", "");
+                        value.add(parts[1].trim());
+                        myPhoneBook.put(key, value);
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                }
+                ;
+            }
+        }
 
         while (!programm.exit) {
             programm.menu();
